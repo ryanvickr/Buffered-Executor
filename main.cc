@@ -9,5 +9,10 @@ int main()
         std::cout << s << std::endl;
     };
     ConcurrentExecutor<std::string> exec(func);
+
+    std::string test = "test";
+    exec.Submit("hello");
+    exec.Submit(test);
+    std::cout << "Queue size: " << exec.Size() << std::endl;
     std::cout << "Hello World" << std::endl;
 }
