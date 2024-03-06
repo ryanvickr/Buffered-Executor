@@ -13,6 +13,6 @@ int main()
     std::string test = "test";
     exec.Submit("hello");
     exec.Submit(test);
-    std::cout << "Queue size: " << exec.Size() << std::endl;
+    std::cout << "Queue size: " << exec.BufferSize() << std::endl;
     std::cout << "Hello World" << std::endl;
 }

@@ -19,10 +19,9 @@ class ConcurrentExecutor{
 	void Submit(T& item);
 	void Submit(T&& item);
 
-	inline size_t Size() {
-		std::lock_guard<std::mutex> lock(mu_);
-		return queue_.size();
-	}
+	// Returns the current size of the buffer (i.e. how many items are
+	// pending).
+	size_t BufferSize();
 
  private:
 	// The function used by the consumer thread.
@@ -51,6 +50,12 @@ void ConcurrentExecutor<T>::Submit(T&& item) {
 	std::lock_guard<std::mutex> lock(mu_);
 	queue_.emplace(item);
 	cv_.notify_one();
+}
+
+template <typename T>
+size_t ConcurrentExecutor<T>::BufferSize() {
+	std::lock_guard<std::mutex> lock(mu_);
+	return queue_.size();
 }
 
 #endif // CONCURRENT_EXECUTOR_H
