@@ -23,9 +23,10 @@ class ConcurrentExecutor{
 	}
 
  private:
-   std::function<void(T)> executor_func_;
-   std::mutex mu_;
-   std::queue<T> queue_;
+	// The function used by the consumer thread.
+    std::function<void(T)> executor_func_;
+    std::mutex mu_;
+    std::queue<T> queue_;
 };
 
 template <typename T>
