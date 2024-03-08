@@ -14,7 +14,8 @@ concurrent execution by an arbitrary executor. */
 template <typename T>
 class ConcurrentExecutor{
  public:
-	explicit ConcurrentExecutor(std::function<void(T)> executor_func);
+	explicit ConcurrentExecutor(
+		std::function<void(T)> executor_func, int num_threads = 1);
 
 	~ConcurrentExecutor();
 
@@ -27,24 +28,28 @@ class ConcurrentExecutor{
 	size_t BufferSize();
 
  private:
+	// Initializes `Executor` threads, based on the provided
+	// `thread_count`.
 	void LaunchExecutors(int thread_count);
+	// An executor loop.
 	void Executor(int id);
 
 	// The function used by the consumer thread.
-    std::function<void(T)> executor_func_;
+	std::function<void(T)> executor_func_;
 	// The thread pool
 	std::vector<std::thread> executor_threads_;
 
-    std::mutex mu_;
-    std::queue<T> queue_;
+	std::mutex mu_;
+	std::queue<T> queue_;
 	std::condition_variable cv_;
 	std::atomic_bool done_;
 };
 
 template <typename T>
-ConcurrentExecutor<T>::ConcurrentExecutor(std::function<void(T)> executor_func):
+ConcurrentExecutor<T>::ConcurrentExecutor(
+	std::function<void(T)> executor_func, int num_threads):
 	executor_func_(std::move(executor_func)) {
-	LaunchExecutors(1);
+	LaunchExecutors(num_threads);
 }
 
 template <typename T>

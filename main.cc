@@ -15,6 +15,7 @@ int main()
     std::string test = "test";
     exec.Submit("hello");
     exec.Submit(test);
+    std::this_thread::sleep_for(std::chrono::seconds(2));
     std::cout << "Queue size: " << exec.BufferSize() << std::endl;
 
     return 0;
