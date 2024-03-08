@@ -78,8 +78,7 @@ size_t ConcurrentExecutor<T>::BufferSize() {
 template <typename T>
 void ConcurrentExecutor<T>::LaunchExecutors(int thread_count) {
 	for (int i = 0; i < thread_count; i++) {
-		std::thread th(&ConcurrentExecutor::Executor, this, i);
-		executor_threads_.emplace_back(std::move(th));
+		executor_threads_.emplace_back(&ConcurrentExecutor::Executor, this, i);
 	}
 }
 
