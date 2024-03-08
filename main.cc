@@ -8,9 +8,8 @@ int main()
 {
     auto func = [](std::string s) {
         std::cout << s << std::endl;
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     };
-    ConcurrentExecutor<std::string> exec(func);
+    ConcurrentExecutor<std::string> exec(func, 2);
 
     std::string test = "test";
     exec.Submit("hello");

@@ -42,7 +42,7 @@ class ConcurrentExecutor{
 	std::mutex mu_;
 	std::queue<T> queue_;
 	std::condition_variable cv_;
-	std::atomic_bool done_;
+	bool done_;
 };
 
 template <typename T>
@@ -54,7 +54,8 @@ ConcurrentExecutor<T>::ConcurrentExecutor(
 
 template <typename T>
 ConcurrentExecutor<T>::~ConcurrentExecutor() {
-	done_.exchange(true);
+	done_ = true;
+	cv_.notify_all();
 	for (auto& thread : executor_threads_) {
 		thread.join();
 	}
@@ -94,7 +95,9 @@ void ConcurrentExecutor<T>::Executor(int id) {
 	while (!done_) {
 		// Get the next item from the queue.
 		std::unique_lock<std::mutex> lock(mu_);
-		cv_.wait(lock, [this]{ return !queue_.empty(); });
+		cv_.wait(lock, [this]{ return !queue_.empty() || done_; });
+		if (queue_.empty()) break;
+
 		T data = queue_.front();
 		queue_.pop();
 		lock.unlock();
