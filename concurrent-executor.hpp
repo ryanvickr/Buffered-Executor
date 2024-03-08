@@ -96,7 +96,7 @@ void ConcurrentExecutor<T>::Executor(int id) {
 		// Get the next item from the queue.
 		std::unique_lock<std::mutex> lock(mu_);
 		cv_.wait(lock, [this]{ return !queue_.empty() || done_; });
-		if (queue_.empty()) break;
+		if (done_ && queue_.empty()) break;
 
 		T data = queue_.front();
 		queue_.pop();
